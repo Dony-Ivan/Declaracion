@@ -23,17 +23,110 @@
             overflow: hidden;
         }
         
-        .carta {
-            background-color: white;
+        /* Pantalla de notificación */
+        .notificacion {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            background: url('giyus.gif') center/cover no-repeat;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            color: white;
+        }
+        
+        .mensaje-notificacion {
+            background: white;
+            padding: 25px;
             border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            max-width: 350px;
+            width: 90%;
+            color: #333;
+            transform: scale(0);
+            animation: aparecer 0.5s forwards 0.5s;
+        }
+        
+        .mensaje-notificacion h2 {
+            color: #ff4d8d;
+            margin-bottom: 15px;
+        }
+        
+        .mensaje-notificacion p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        #abrirMensaje {
+            padding: 12px 30px;
+            background: linear-gradient(to right, #ff4d8d, #ff7eb3);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+        }
+        
+        #abrirMensaje:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 77, 141, 0.4);
+        }
+        
+        @keyframes aparecer {
+            0% {
+                transform: scale(0);
+            }
+            70% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .carta-container {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            justify-content: center;
+            align-items: center;
+            background: url('flores2.gif') center/cover no-repeat;
+            z-index: 999;
+            transition: background 0.8s ease-in-out;
+        }
+        
+        .carta-container.fondo-osito {
+            background: url('osito1.gif') center/cover no-repeat;
+        }
+        
+        .carta {
+            background: rgba(246, 231, 231, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             padding: 40px;
             text-align: left;
             max-width: 550px;
             width: 100%;
             position: relative;
             overflow: hidden;
-            border: 1px solid #ffd9e3;
+            border: 2px solid #ff9ec0;
+            transform: scale(0.1);
+            transition: transform 0.8s ease-out;
+        }
+        
+        .carta.mostrar {
+            transform: scale(1);
         }
         
         .encabezado {
@@ -188,6 +281,70 @@
             text-align: center;
         }
         
+        /* Estilos para el reproductor de audio */
+        .reproductores-audio {
+            margin-top: 25px;
+            text-align: center;
+            padding: 15px;
+            background-color: rgba(255, 77, 141, 0.05);
+            border-radius: 12px;
+            border: 1px solid #ffd9e3;
+        }
+        
+        .reproductor-audio {
+            margin-bottom: 20px;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .reproductor-audio:last-child {
+            margin-bottom: 0;
+        }
+        
+        .reproductor-audio p {
+            margin-bottom: 12px;
+            font-size: 16px;
+            color: #ff4d8d;
+            font-weight: bold;
+        }
+        
+        .boton-audio {
+            padding: 10px 20px;
+            background: linear-gradient(to right, #ff7eb3, #ff4d8d);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(255, 77, 141, 0.2);
+            margin: 0 5px;
+        }
+        
+        .boton-audio:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 77, 141, 0.3);
+        }
+        
+        .boton-audio:active {
+            transform: translateY(0);
+        }
+        
+        .boton-audio.reproduciendo {
+            background: linear-gradient(to right, #36b3a8, #2c9c92);
+        }
+        
+        .icono-audio {
+            font-size: 18px;
+        }
+        
         @media (max-width: 600px) {
             .carta {
                 padding: 25px;
@@ -217,51 +374,218 @@
                 max-width: 150px;
                 max-height: 150px;
             }
+            
+            .reproductores-audio {
+                padding: 12px;
+            }
+            
+            .reproductor-audio {
+                padding: 10px;
+            }
+            
+            .boton-audio {
+                padding: 8px 16px;
+                font-size: 14px;
+                margin: 5px;
+            }
+            
+            .mensaje-notificacion {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="carta" id="carta">
-        <div class="encabezado">
-            <h1>¿Quieres ser mi enamorada 💖?</h1>
+    <!-- Pantalla de notificación inicial -->
+    <div class="notificacion" id="notificacion">
+        <div class="mensaje-notificacion">
+            <h2>📩 Nuevo mensaje</h2>
+            <p>¡Tienes un mensaje especial para ti! ¿Deseas abrirlo?</p>
+            <button id="abrirMensaje">Abrir mensaje</button>
         </div>
-        
-        <div class="contenido">
-            <p>Solo quería decirte algo que me guardé por un tiempo. Me gustas cada día que pasa, me gustas un poquito más 💖.</p>
-            
-            <div class="numero-uno">
-                <span>01</span> <span>Nº 1</span>
-            </div>
-            
-            <!-- GIF del Osito integrado -->
-            <div class="gif-container" id="gifContainer">
-                <img id="gifOsito" class="gif-osito" src="osito1.gif" alt="Osito GIF" />
-            </div>
-            
-            <div class="separador"></div>
-        </div>
-        
-        <div class="botones-contenedor">
-            <div class="botones">
-                <button id="si">¡Sí!</button>
-                <button id="no">No</button>
-            </div>
-        </div>
-        
-        <div id="mensaje" class="mensaje"></div>
-        <div class="consejo">Aver intenta rechazarme si puedes jajaja</div>
-        
-        <div class="corazones" id="corazones"></div>
     </div>
+    
+    <!-- Contenedor de la carta (oculto inicialmente) -->
+    <div class="carta-container" id="cartaContainer">
+        <div class="carta" id="carta">
+            <div class="encabezado">
+                <h1>¿Quieres ser mi enamorada 💖?</h1>
+            </div>
+            
+            <div class="contenido">
+                <p>Solo quería decirte algo que me guardé por un tiempo. Me gustas cada día que pasa, me gustas un poquito más 💖.</p>
+                
+                <div class="numero-uno">
+                    <span>01</span> <span>Nº 1</span>
+                </div>
+                
+                <!-- GIF del Osito integrado -->
+                <div class="gif-container" id="gifContainer">
+                    <img id="gifOsito" class="gif-osito" src="osito1.gif" alt="Osito GIF" />
+                </div>
+                
+                <div class="separador"></div>
+            </div>
+            
+            <div class="botones-contenedor">
+                <div class="botones">
+                    <button id="si">¡Sí!</button>
+                    <button id="no">No</button>
+                </div>
+            </div>
+            
+            <div id="mensaje" class="mensaje"></div>
+            <div class="consejo">Aver intenta rechazarme si puedes jajaja  hecho por D. I. Sistemas</div>
+            
+            <!-- Reproductores de audio añadidos -->
+            <div class="reproductores-audio">
+                <div class="reproductor-audio">
+                    <p>¿Quieres escuchar algo especial?</p>
+                    <button class="boton-audio" id="reproducirAudio1" data-audio="audio1">
+                        <span class="icono-audio">🎵</span> Reproducir Audio 1
+                    </button>
+                    <audio id="audio1">
+                        <source src="audio.mp3" type="audio/mpeg">
+                        Tu navegador no soporta el elemento de audio.
+                    </audio>
+                </div>
+                
+                <div class="reproductor-audio">
+                    <p>Un segundo mensaje para ti</p>
+                    <button class="boton-audio" id="reproducirAudio2" data-audio="audio2">
+                        <span class="icono-audio">🎵</span> Reproducir Audio 2
+                    </button>
+                    <audio id="audio2">
+                        <source src="audio2.mp3" type="audio/mpeg">
+                        Tu navegador no soporta el elemento de audio.
+                    </audio>
+                </div>
+                
+                <div class="reproductor-audio">
+                    <p>Y un tercer mensaje especial</p>
+                    <button class="boton-audio" id="reproducirAudio3" data-audio="audio3">
+                        <span class="icono-audio">🎵</span> Reproducir Audio 3
+                    </button>
+                    <audio id="audio3">
+                        <source src="audio3.mp3" type="audio/mpeg">
+                        Tu navegador no soporta el elemento de audio.
+                    </audio>
+                </div>
+            </div>
+            
+            <div class="corazones" id="corazones"></div>
+        </div>
+    </div>
+
+    <!-- Sonido de notificación -->
+    <audio id="sonidoNotificacion" preload="auto">
+        <source src="notification-sound.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const notificacion = document.getElementById('notificacion');
+            const cartaContainer = document.getElementById('cartaContainer');
+            const carta = document.getElementById('carta');
+            const abrirMensajeBtn = document.getElementById('abrirMensaje');
+            const sonidoNotificacion = document.getElementById('sonidoNotificacion');
+            
             const botonSi = document.getElementById('si');
             const botonNo = document.getElementById('no');
             const mensaje = document.getElementById('mensaje');
             const corazonesContainer = document.getElementById('corazones');
             const botonesContenedor = document.querySelector('.botones-contenedor');
             const gifOsito = document.getElementById('gifOsito');
+            
+            // Elementos de audio
+            const audio1 = document.getElementById('audio1');
+            const audio2 = document.getElementById('audio2');
+            const audio3 = document.getElementById('audio3');
+            const botonesAudio = document.querySelectorAll('.boton-audio');
+            
+            // Estado de los audios
+            const audioEstado = {
+                audio1: { reproduciendo: false, elemento: audio1 },
+                audio2: { reproduciendo: false, elemento: audio2 },
+                audio3: { reproduciendo: false, elemento: audio3 }
+            };
+            
+            // Reproducir sonido de notificación al cargar la página
+            setTimeout(function() {
+                sonidoNotificacion.play().catch(e => console.log("El sonido de notificación no pudo reproducirse automáticamente: ", e));
+            }, 1000);
+            
+            // Abrir la carta al hacer clic en el botón
+            abrirMensajeBtn.addEventListener('click', function() {
+                // Ocultar notificación
+                notificacion.style.display = 'none';
+                
+                // Mostrar contenedor de la carta
+                cartaContainer.style.display = 'flex';
+                
+                // Animación de la carta (crece desde el centro)
+                setTimeout(function() {
+                    carta.classList.add('mostrar');
+                }, 50);
+            });
+            
+            // Controlar la reproducción de todos los audios
+            botonesAudio.forEach(boton => {
+                boton.addEventListener('click', function() {
+                    const audioId = this.getAttribute('data-audio');
+                    const audio = audioEstado[audioId];
+                    
+                    // Pausar todos los audios primero
+                    for (let id in audioEstado) {
+                        if (id !== audioId && audioEstado[id].reproduciendo) {
+                            audioEstado[id].elemento.pause();
+                            audioEstado[id].elemento.currentTime = 0;
+                            audioEstado[id].reproduciendo = false;
+                            
+                            // Restaurar apariencia del botón
+                            const otroBoton = document.querySelector(`[data-audio="${id}"]`);
+                            otroBoton.classList.remove('reproduciendo');
+                            otroBoton.innerHTML = '<span class="icono-audio">🎵</span> Reproducir ' + otroBoton.textContent.replace('Pausar ', '');
+                        }
+                    }
+                    
+                    // Reproducir o pausar el audio seleccionado
+                    if (audio.reproduciendo) {
+                        audio.elemento.pause();
+                        audio.elemento.currentTime = 0;
+                        this.classList.remove('reproduciendo');
+                        this.innerHTML = '<span class="icono-audio">🎵</span> Reproducir ' + this.textContent.replace('Pausar ', '');
+                    } else {
+                        audio.elemento.play()
+                            .then(() => {
+                                this.classList.add('reproduciendo');
+                                this.innerHTML = '<span class="icono-audio">⏸️</span> Pausar ' + this.textContent.replace('Reproducir ', '');
+                                audio.reproduciendo = true;
+                            })
+                            .catch(error => {
+                                console.log('Error al reproducir audio:', error);
+                                alert('Para reproducir el audio, debes interactuar primero con la página. Haz clic en cualquier parte y luego en reproducir.');
+                            });
+                    }
+                    
+                    audio.reproduciendo = !audio.reproduciendo;
+                });
+            });
+            
+            // Cuando cualquier audio termina
+            [audio1, audio2, audio3].forEach(audio => {
+                audio.addEventListener('ended', function() {
+                    const audioId = this.id;
+                    audioEstado[audioId].reproduciendo = false;
+                    
+                    // Restaurar apariencia del botón
+                    const boton = document.querySelector(`[data-audio="${audioId}"]`);
+                    if (boton) {
+                        boton.classList.remove('reproduciendo');
+                        boton.innerHTML = '<span class="icono-audio">🎵</span> Reproducir ' + boton.textContent.replace('Pausar ', '');
+                    }
+                });
+            });
             
             // Función para crear corazones
             function crearCorazones() {
@@ -289,7 +613,6 @@
                     // Cambiar la fuente del GIF después de que se complete la transición de opacidad
                     gifOsito.src = "osito.gif"; // Cambia a tu segundo GIF
                     
-                    
                     // Restaurar la opacidad
                     setTimeout(() => {
                         gifOsito.style.opacity = 1;
@@ -300,10 +623,13 @@
             // Evento para el botón Sí
             botonSi.addEventListener('click', function() {
                 mensaje.style.display = 'block';
-                mensaje.innerHTML = '¡SABIA QUE DIRIAS QUE SÍ LIZBETH JAJAJA! Gracias por aceptar. Espero te haya gustado 💖';
+                mensaje.innerHTML = '¡SABIA QUE DIRIAS QUE SÍ LIZBETH JAJAJA! Gracias por aceptar. Espero te haya gustado ...💖';
                 
                 // Cambiar el GIF del osito
                 cambiarGif();
+                
+                // Cambiar el fondo del contenedor al GIF "osito1"
+                cartaContainer.classList.add('fondo-osito');
                 
                 // Crear corazones de celebración
                 for (let i = 0; i < 25; i++) {
@@ -312,6 +638,20 @@
                 
                 // Ocultar el botón No
                 botonNo.style.display = 'none';
+                
+                // Reproducir automáticamente el primer audio si no se ha reproducido
+                if (!audioEstado.audio1.reproduciendo) {
+                    audio1.play()
+                        .then(() => {
+                            const boton = document.querySelector('[data-audio="audio1"]');
+                            boton.classList.add('reproduciendo');
+                            boton.innerHTML = '<span class="icono-audio">⏸️</span> Pausar Audio 1';
+                            audioEstado.audio1.reproduciendo = true;
+                        })
+                        .catch(error => {
+                            console.log('Error al reproducir audio automáticamente:', error);
+                        });
+                }
             });
             
             // Función para mover el botón No
@@ -343,7 +683,7 @@
                 
                 // Mostrar mensaje de que casi lo atrapan
                 mensaje.style.display = 'block';
-                mensaje.innerHTML = "¡Casi! Pero el 'No' se escapó de nuevo 💨<br>¿Por qué no intentas con el 'Sí'?";
+                mensaje.innerHTML = "beeee";
                 
                 // Ocultar el mensaje después de 3 segundos
                 setTimeout(() => {
