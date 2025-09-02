@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Quieres ser mi enamorada?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe6f2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #444;
+            overflow: hidden;
+        }
+        
+        .carta {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            text-align: left;
+            max-width: 550px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ffd9e3;
+        }
+        
+        .encabezado {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #ff4d8d;
+            padding-bottom: 15px;
+        }
+        
+        h1 {
+            color: #ff4d8d;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .contenido {
+            line-height: 1.6;
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+        
+        .numero-uno {
+            text-align: center;
+            margin: 25px 0;
+            font-weight: bold;
+            font-size: 20px;
+            color: #ff4d8d;
+            position: relative;
+        }
+        
+        .gif-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .gif-osito {
+            max-width: 200px;
+            max-height: 200px;
+            width: auto;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.5s ease;
+        }
+        
+        .separador {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #ff4d8d, transparent);
+            margin: 25px 0;
+        }
+        
+        .botones-contenedor {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 35px;
+            position: relative;
+            min-height: 120px;
+            align-items: center;
+        }
+        
+        .botones {
+            display: flex;
+            gap: 30px;
+            position: relative;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        button {
+            padding: 12px 35px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+            font-family: 'Georgia', serif;
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+        
+        #si {
+            background: linear-gradient(to right, #36b3a8, #2c9c92);
+            color: white;
+            box-shadow: 0 4px 10px rgba(54, 179, 168, 0.3);
+        }
+        
+        #si:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(54, 179, 168, 0.4);
+        }
+        
+        #no {
+            background: linear-gradient(to right, #ff4d8d, #ff7eb3);
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 77, 141, 0.3);
+            transition: all 0.2s ease;
+            position: absolute;
+        }
+        
+        .corazones {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .corazon {
+            position: absolute;
+            font-size: 22px;
+            color: #ff4d8d;
+            opacity: 0;
+            animation: flotar 3s linear forwards;
+        }
+        
+        @keyframes flotar {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(20deg);
+                opacity: 0;
+            }
+        }
+        
+        .mensaje {
+            display: none;
+            margin-top: 25px;
+            font-size: 20px;
+            color: #ff4d8d;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: rgba(255, 77, 141, 0.1);
+            text-align: center;
+        }
+        
+        .consejo {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #050505;
+            font-style: italic;
+            text-align: center;
+        }
+        
+        @media (max-width: 600px) {
+            .carta {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            button {
+                padding: 10px 25px;
+                font-size: 16px;
+                min-width: 100px;
+            }
+            
+            .botones {
+                gap: 15px;
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .botones-contenedor {
+                min-height: 200px;
+            }
+            
+            .gif-osito {
+                max-width: 150px;
+                max-height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="carta" id="carta">
+        <div class="encabezado">
+            <h1>¿Quieres ser mi enamorada 💖?</h1>
+        </div>
+        
+        <div class="contenido">
+            <p>Solo quería decirte algo que me guardé por un tiempo. Me gustas cada día que pasa, me gustas un poquito más 💖.</p>
+            
+            <div class="numero-uno">
+                <span>01</span> <span>Nº 1</span>
+            </div>
+            
+            <!-- GIF del Osito integrado -->
+            <div class="gif-container" id="gifContainer">
+                <img id="gifOsito" class="gif-osito" src="osito1.gif" alt="Osito GIF" />
+            </div>
+            
+            <div class="separador"></div>
+        </div>
+        
+        <div class="botones-contenedor">
+            <div class="botones">
+                <button id="si">¡Sí!</button>
+                <button id="no">No</button>
+            </div>
+        </div>
+        
+        <div id="mensaje" class="mensaje"></div>
+        <div class="consejo">Aver intenta rechazarme si puedes jajaja</div>
+        
+        <div class="corazones" id="corazones"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const botonSi = document.getElementById('si');
+            const botonNo = document.getElementById('no');
+            const mensaje = document.getElementById('mensaje');
+            const corazonesContainer = document.getElementById('corazones');
+            const botonesContenedor = document.querySelector('.botones-contenedor');
+            const gifOsito = document.getElementById('gifOsito');
+            
+            // Función para crear corazones
+            function crearCorazones() {
+                for (let i = 0; i < 15; i++) {
+                    const corazon = document.createElement('div');
+                    corazon.classList.add('corazon');
+                    corazon.innerHTML = '💖';
+                    corazon.style.left = Math.random() * 100 + '%';
+                    corazon.style.animationDelay = Math.random() * 2 + 's';
+                    corazonesContainer.appendChild(corazon);
+                    
+                    // Eliminar el corazón después de la animación
+                    setTimeout(() => {
+                        corazon.remove();
+                    }, 3000);
+                }
+            }
+            
+            // Función para cambiar el GIF del osito
+            function cambiarGif() {
+                // Añadir efecto de desvanecimiento
+                gifOsito.style.opacity = 0;
+                
+                setTimeout(() => {
+                    // Cambiar la fuente del GIF después de que se complete la transición de opacidad
+                    gifOsito.src = "osito.gif"; // Cambia a tu segundo GIF
+                    
+                    
+                    // Restaurar la opacidad
+                    setTimeout(() => {
+                        gifOsito.style.opacity = 1;
+                    }, 50);
+                }, 500);
+            }
+            
+            // Evento para el botón Sí
+            botonSi.addEventListener('click', function() {
+                mensaje.style.display = 'block';
+                mensaje.innerHTML = '¡SABIA QUE DIRIAS QUE SÍ LIZBETH JAJAJA! Gracias por aceptar. Espero te haya gustado 💖';
+                
+                // Cambiar el GIF del osito
+                cambiarGif();
+                
+                // Crear corazones de celebración
+                for (let i = 0; i < 25; i++) {
+                    crearCorazones();
+                }
+                
+                // Ocultar el botón No
+                botonNo.style.display = 'none';
+            });
+            
+            // Función para mover el botón No
+            function moverBotonNo() {
+                // Obtener dimensiones del contenedor
+                const containerRect = botonesContenedor.getBoundingClientRect();
+                const buttonRect = botonNo.getBoundingClientRect();
+                
+                // Calcular posición máxima para que el botón no salga del contenedor
+                const maxX = containerRect.width - buttonRect.width;
+                const maxY = containerRect.height - buttonRect.height;
+                
+                const newX = Math.floor(Math.random() * maxX);
+                const newY = Math.floor(Math.random() * maxY);
+                
+                botonNo.style.left = newX + 'px';
+                botonNo.style.top = newY + 'px';
+            }
+            
+            // Evento para el botón No (se mueve al acercar el cursor)
+            botonNo.addEventListener('mouseover', function() {
+                moverBotonNo();
+            });
+            
+            // También mover cuando se hace clic (por si acaso logran acercarse)
+            botonNo.addEventListener('click', function() {
+                moverBotonNo();
+                crearCorazones();
+                
+                // Mostrar mensaje de que casi lo atrapan
+                mensaje.style.display = 'block';
+                mensaje.innerHTML = "¡Casi! Pero el 'No' se escapó de nuevo 💨<br>¿Por qué no intentas con el 'Sí'?";
+                
+                // Ocultar el mensaje después de 3 segundos
+                setTimeout(() => {
+                    mensaje.style.display = 'none';
+                }, 3000);
+            });
+            
+            // Mover el botón No inicialmente para que no esté encima del Sí
+            setTimeout(() => {
+                moverBotonNo();
+            }, 100);
+            
+            // Mover el botón No periódicamente cada 3 segundos
+            setInterval(() => {
+                moverBotonNo();
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
