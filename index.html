@@ -23,7 +23,6 @@
             overflow: hidden;
         }
         
-        /* Pantalla de notificación */
         .notificacion {
             position: fixed;
             top: 0;
@@ -281,7 +280,6 @@
             text-align: center;
         }
         
-        /* Estilos para el reproductor de audio */
         .reproductores-audio {
             margin-top: 25px;
             text-align: center;
@@ -396,7 +394,6 @@
     </style>
 </head>
 <body>
-    <!-- Pantalla de notificación inicial -->
     <div class="notificacion" id="notificacion">
         <div class="mensaje-notificacion">
             <h2>📩 Nuevo mensaje</h2>
@@ -405,7 +402,6 @@
         </div>
     </div>
     
-    <!-- Contenedor de la carta (oculto inicialmente) -->
     <div class="carta-container" id="cartaContainer">
         <div class="carta" id="carta">
             <div class="encabezado">
@@ -413,13 +409,12 @@
             </div>
             
             <div class="contenido">
-                <p>Solo quería decirte algo que me guardé por un tiempo. Me gustas cada día que pasa, me gustas un poquito más 💖.</p>
+                <p>Solo quería decirte algo que me guardé por un tiempo. Me gustas cada día que pasa, me gustas un poquito más 💖 ME ACEPTAS? SI O NO.</p>
                 
                 <div class="numero-uno">
                     <span>01</span> <span>Nº 1</span>
                 </div>
                 
-                <!-- GIF del Osito integrado -->
                 <div class="gif-container" id="gifContainer">
                     <img id="gifOsito" class="gif-osito" src="osito1.gif" alt="Osito GIF" />
                 </div>
@@ -435,9 +430,8 @@
             </div>
             
             <div id="mensaje" class="mensaje"></div>
-            <div class="consejo">Aver intenta rechazarme si puedes jajaja  hecho por D. I. Sistemas</div>
+            <div class="consejo">Aver intenta rechazarme si puedes jajaja  hecho por D. I. </div>
             
-            <!-- Reproductores de audio añadidos -->
             <div class="reproductores-audio">
                 <div class="reproductor-audio">
                     <p>¿Quieres escuchar algo especial?</p>
@@ -477,9 +471,8 @@
         </div>
     </div>
 
-    <!-- Sonido de notificación -->
     <audio id="sonidoNotificacion" preload="auto">
-        <source src="notification-sound.mp3" type="audio/mpeg">
+        <source src="Musica.mp3" type="audio/mpeg">
     </audio>
 
     <script>
@@ -497,23 +490,31 @@
             const botonesContenedor = document.querySelector('.botones-contenedor');
             const gifOsito = document.getElementById('gifOsito');
             
-            // Elementos de audio
             const audio1 = document.getElementById('audio1');
             const audio2 = document.getElementById('audio2');
             const audio3 = document.getElementById('audio3');
             const botonesAudio = document.querySelectorAll('.boton-audio');
             
-            // Estado de los audios
             const audioEstado = {
                 audio1: { reproduciendo: false, elemento: audio1 },
                 audio2: { reproduciendo: false, elemento: audio2 },
-                audio3: { reproduciendo: false, elemento: audio3 }
+                audio3: { reproduciendo: false, elemento: audio3 },
+                musica: { reproduciendo: false, elemento: sonidoNotificacion }
             };
             
-            // Variable para controlar si se ha presionado "Sí"
             let siPresionado = false;
+            let musicaDetenida = false;
+            let musicaIniciada = false;
             
-            // Función para pausar todos los audios
+            function detenerMusicaPrincipal() {
+                if (!musicaDetenida && audioEstado.musica.reproduciendo) {
+                    sonidoNotificacion.pause();
+                    sonidoNotificacion.currentTime = 0;
+                    audioEstado.musica.reproduciendo = false;
+                    musicaDetenida = true;
+                }
+            }
+            
             function pausarTodosLosAudios(audioExcluido = null) {
                 for (let id in audioEstado) {
                     if (audioExcluido && id === audioExcluido) continue;
@@ -523,54 +524,54 @@
                         audioEstado[id].elemento.currentTime = 0;
                         audioEstado[id].reproduciendo = false;
                         
-                        // Restaurar apariencia del botón
-                        const boton = document.querySelector(`[data-audio="${id}"]`);
-                        if (boton) {
-                            boton.classList.remove('reproduciendo');
-                            boton.innerHTML = '<span class="icono-audio">🎵</span> Reproducir ' + boton.textContent.replace('Pausar ', '');
+                        if (id !== 'musica') {
+                            const boton = document.querySelector(`[data-audio="${id}"]`);
+                            if (boton) {
+                                boton.classList.remove('reproduciendo');
+                                boton.innerHTML = '<span class="icono-audio">🎵</span> Reproducir ' + boton.textContent.replace('Pausar ', '');
+                            }
                         }
                     }
                 }
             }
             
-            // Reproducir sonido de notificación al cargar la página
-            setTimeout(function() {
-                sonidoNotificacion.play().catch(e => console.log("El sonido de notificación no pudo reproducirse automáticamente: ", e));
-            }, 1000);
+            function iniciarMusicaPrincipal() {
+                if (!musicaIniciada && !musicaDetenida) {
+                    sonidoNotificacion.play()
+                        .then(() => {
+                            audioEstado.musica.reproduciendo = true;
+                            musicaIniciada = true;
+                        })
+                        .catch(e => {
+                            console.log("Error al reproducir música automáticamente: ", e);
+                        });
+                }
+            }
             
-            // Abrir la carta al hacer clic en el botón
             abrirMensajeBtn.addEventListener('click', function() {
-                // Ocultar notificación
                 notificacion.style.display = 'none';
-                
-                // Mostrar contenedor de la carta
                 cartaContainer.style.display = 'flex';
                 
-                // Animación de la carta (crece desde el centro)
                 setTimeout(function() {
                     carta.classList.add('mostrar');
+                    iniciarMusicaPrincipal();
                 }, 50);
             });
             
-            // Controlar la reproducción de todos los audios
             botonesAudio.forEach(boton => {
                 boton.addEventListener('click', function() {
                     const audioId = this.getAttribute('data-audio');
                     const audio = audioEstado[audioId];
                     
-                    // Si se ha presionado "Sí", solo permitir el audio1
+                    detenerMusicaPrincipal();
+                    
                     if (siPresionado && audioId !== 'audio1') {
-                        // Pausar cualquier otro audio que esté reproduciéndose
                         pausarTodosLosAudios();
-                        
-                        // No permitir reproducir otros audios
                         return;
                     }
                     
-                    // Pausar todos los audios excepto el actual
                     pausarTodosLosAudios(audioId);
                     
-                    // Reproducir o pausar el audio seleccionado
                     if (audio.reproduciendo) {
                         audio.elemento.pause();
                         audio.elemento.currentTime = 0;
@@ -585,7 +586,6 @@
                             })
                             .catch(error => {
                                 console.log('Error al reproducir audio:', error);
-                                alert('Para reproducir el audio, debes interactuar primero con la página. Haz clic en cualquier parte y luego en reproducir.');
                             });
                     }
                     
@@ -593,13 +593,11 @@
                 });
             });
             
-            // Cuando cualquier audio termina
             [audio1, audio2, audio3].forEach(audio => {
                 audio.addEventListener('ended', function() {
                     const audioId = this.id;
                     audioEstado[audioId].reproduciendo = false;
                     
-                    // Restaurar apariencia del botón
                     const boton = document.querySelector(`[data-audio="${audioId}"]`);
                     if (boton) {
                         boton.classList.remove('reproduciendo');
@@ -608,7 +606,6 @@
                 });
             });
             
-            // Función para crear corazones
             function crearCorazones() {
                 for (let i = 0; i < 15; i++) {
                     const corazon = document.createElement('div');
@@ -618,55 +615,41 @@
                     corazon.style.animationDelay = Math.random() * 2 + 's';
                     corazonesContainer.appendChild(corazon);
                     
-                    // Eliminar el corazón después de la animación
                     setTimeout(() => {
                         corazon.remove();
                     }, 3000);
                 }
             }
             
-            // Función para cambiar el GIF del osito
             function cambiarGif() {
-                // Añadir efecto de desvanecimiento
                 gifOsito.style.opacity = 0;
                 
                 setTimeout(() => {
-                    // Cambiar la fuente del GIF después de que se complete la transición de opacidad
-                    gifOsito.src = "osito.gif"; // Cambia a tu segundo GIF
+                    gifOsito.src = "osito.gif";
                     
-                    // Restaurar la opacidad
                     setTimeout(() => {
                         gifOsito.style.opacity = 1;
                     }, 50);
                 }, 500);
             }
             
-            // Evento para el botón Sí
             botonSi.addEventListener('click', function() {
-                // Marcar que se ha presionado "Sí"
+                detenerMusicaPrincipal();
                 siPresionado = true;
                 
                 mensaje.style.display = 'block';
-                mensaje.innerHTML = '¡SABIA QUE DIRIAS QUE SÍ LIZBETH JAJAJA! Gracias por aceptar. Espero te haya gustado ...💖';
+                mensaje.innerHTML = '¡SABIA QUE DIRIAS QUE SÍ JAJAJA! Gracias por aceptar. Espero te haya gustado ...💖 ';
                 
-                // Cambiar el GIF del osito
                 cambiarGif();
-                
-                // Cambiar el fondo del contenedor al GIF "osito1"
                 cartaContainer.classList.add('fondo-osito');
                 
-                // Crear corazones de celebración
                 for (let i = 0; i < 25; i++) {
                     crearCorazones();
                 }
                 
-                // Ocultar el botón No
                 botonNo.style.display = 'none';
-                
-                // Pausar todos los audios antes de reproducir el primero
                 pausarTodosLosAudios();
                 
-                // Reproducir automáticamente el primer audio
                 audio1.play()
                     .then(() => {
                         const boton = document.querySelector('[data-audio="audio1"]');
@@ -679,13 +662,10 @@
                     });
             });
             
-            // Función para mover el botón No
             function moverBotonNo() {
-                // Obtener dimensiones del contenedor
                 const containerRect = botonesContenedor.getBoundingClientRect();
                 const buttonRect = botonNo.getBoundingClientRect();
                 
-                // Calcular posición máxima para que el botón no salga del contenedor
                 const maxX = containerRect.width - buttonRect.width;
                 const maxY = containerRect.height - buttonRect.height;
                 
@@ -696,31 +676,25 @@
                 botonNo.style.top = newY + 'px';
             }
             
-            // Evento para el botón No (se mueve al acercar el cursor)
             botonNo.addEventListener('mouseover', function() {
                 moverBotonNo();
             });
             
-            // También mover cuando se hace clic (por si acaso logran acercarse)
             botonNo.addEventListener('click', function() {
                 moverBotonNo();
                 crearCorazones();
                 
-                // Mostrar mensaje de que casi lo atrapan
-              
                 
-                // Ocultar el mensaje después de 3 segundos
+                
                 setTimeout(() => {
                     mensaje.style.display = 'none';
                 }, 3000);
             });
             
-            // Mover el botón No inicialmente para que no esté encima del Sí
             setTimeout(() => {
                 moverBotonNo();
             }, 100);
             
-            // Mover el botón No periódicamente cada 3 segundos
             setInterval(() => {
                 moverBotonNo();
             }, 3000);
@@ -728,4 +702,3 @@
     </script>
 </body>
 </html>
-
