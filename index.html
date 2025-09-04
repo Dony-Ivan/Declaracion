@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>¿Quieres ser mi enamorada?</title>
     <style>
+        /* Tus estilos CSS existentes se mantienen igual */
         * {
             margin: 0;
             padding: 0;
@@ -312,7 +313,7 @@
             padding: 10px 20px;
             background: linear-gradient(to right, #ff7eb3, #ff4d8d);
             color: white;
-            border: none;
+            border: noe;
             border-radius: 25px;
             cursor: pointer;
             font-family: 'Georgia', serif;
@@ -341,6 +342,125 @@
         
         .icono-audio {
             font-size: 18px;
+        }
+
+        .formulario-mensaje {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            border: 2px solid #ff4d8d;
+            text-align: center;
+        }
+        
+        .formulario-mensaje h3 {
+            color: #ff4d8d;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        .formulario-mensaje p {
+            margin-bottom: 15px;
+            color: #555;
+        }
+        
+        .formulario-mensaje textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 2px solid #ff9ec0;
+            border-radius: 8px;
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            resize: none;
+            margin-bottom: 15px;
+        }
+        
+        .formulario-mensaje textarea:focus {
+            outline: none;
+            border-color: #ff4d8d;
+            box-shadow: 0 0 5px rgba(255, 77, 141, 0.5);
+        }
+        
+        #enviarMensaje {
+            padding: 12px 30px;
+            background: linear-gradient(to right, #36b3a8, #2c9c92);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #enviarMensaje:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(54, 179, 168, 0.4);
+        }
+        
+        .mensaje-exito {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            background-color: rgba(54, 179, 168, 0.1);
+            border: 1px solid #36b3a8;
+            border-radius: 8px;
+            color: #2c9c92;
+            font-weight: bold;
+        }
+        
+        .bloqueo-pantalla {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .alerta-bloqueo {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .alerta-bloqueo h3 {
+            color: #ff4d8d;
+            margin-bottom: 15px;
+        }
+        
+        .alerta-bloqueo p {
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        .cargando {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+            color: #ff4d8d;
+        }
+        
+        .mensaje-error {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            background-color: rgba(255, 77, 141, 0.1);
+            border: 1px solid #ff4d8d;
+            border-radius: 8px;
+            color: #ff4d8d;
+            font-weight: bold;
+            text-align: left;
         }
         
         @media (max-width: 600px) {
@@ -390,6 +510,10 @@
             .mensaje-notificacion {
                 padding: 20px;
             }
+            
+            .formulario-mensaje {
+                padding: 15px;
+            }
         }
     </style>
 </head>
@@ -432,6 +556,16 @@
             <div id="mensaje" class="mensaje"></div>
             <div class="consejo">Aver intenta rechazarme si puedes jajaja  hecho por D. I. </div>
             
+            <div class="formulario-mensaje" id="formularioMensaje">
+                <h3>¡Ahora escribe un mensaje especial! 💌</h3>
+                <p>Escribe algo lindo que llegará directamente a mi corazón (y a mi correo)</p>
+                <textarea id="mensajeParaMi" placeholder="Escribe tu mensaje aquí..."></textarea>
+                <div class="mensaje-error" id="mensajeError"></div>
+                <button id="enviarMensaje">Enviar mensaje</button>
+                <div class="cargando" id="cargando">Enviando mensaje...</div>
+                <div class="mensaje-exito" id="mensajeExito">¡Mensaje enviado con éxito! 💖</div>
+            </div>
+            
             <div class="reproductores-audio">
                 <div class="reproductor-audio">
                     <p>¿Quieres escuchar algo especial?</p>
@@ -471,11 +605,24 @@
         </div>
     </div>
 
+    <div class="bloqueo-pantalla" id="bloqueoPantalla">
+        <div class="alerta-bloqueo">
+            <h3>¡Espera! ✋</h3>
+            <p>Debes completar y enviar tu mensaje especial antes de poder salir.</p>
+            <button id="entendidoBloqueo">Entendido, volveré al mensaje</button>
+        </div>
+    </div>
+
     <audio id="sonidoNotificacion" preload="auto">
         <source src="Musica.mp3" type="audio/mpeg">
     </audio>
 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
+        // Inicialización de EmailJS - REEMPLAZA ESTOS VALORES CON LOS TUYOS
+        // Ve a https://www.emailjs.com/ y crea una cuenta gratuita
+        emailjs.init("FiBpPyBaOslWLjnCU"); // Este es tu User ID público
+        
         document.addEventListener('DOMContentLoaded', function() {
             const notificacion = document.getElementById('notificacion');
             const cartaContainer = document.getElementById('cartaContainer');
@@ -489,6 +636,14 @@
             const corazonesContainer = document.getElementById('corazones');
             const botonesContenedor = document.querySelector('.botones-contenedor');
             const gifOsito = document.getElementById('gifOsito');
+            const formularioMensaje = document.getElementById('formularioMensaje');
+            const mensajeParaMi = document.getElementById('mensajeParaMi');
+            const enviarMensajeBtn = document.getElementById('enviarMensaje');
+            const mensajeExito = document.getElementById('mensajeExito');
+            const mensajeError = document.getElementById('mensajeError');
+            const bloqueoPantalla = document.getElementById('bloqueoPantalla');
+            const entendidoBloqueoBtn = document.getElementById('entendidoBloqueo');
+            const cargando = document.getElementById('cargando');
             
             const audio1 = document.getElementById('audio1');
             const audio2 = document.getElementById('audio2');
@@ -505,6 +660,28 @@
             let siPresionado = false;
             let musicaDetenida = false;
             let musicaIniciada = false;
+            let formularioEnviado = false;
+            
+            // FUNCIÓN DE VALIDACIÓN AGREGADA
+            function validarMensaje(texto) {
+                // Verificar que tenga al menos 10 caracteres
+                if (texto.length < 10) {
+                    return "El mensaje debe tener al menos 10 caracteres.";
+                }
+                
+                // Verificar que no sean solo puntos o caracteres repetidos
+                if (/^(.)\1*$/.test(texto) || /^[.\s]+$/.test(texto)) {
+                    return "El mensaje no puede consistir solo en caracteres repetidos o puntos.";
+                }
+                
+                // Verificar que contenga la palabra "amor" (sin importar mayúsculas/minúsculas)
+                if (!texto.toLowerCase().includes("amor")) {
+                    return "El mensaje debe contener la palabra 'amor'.";
+                }
+                
+                // Si pasa todas las validaciones
+                return null;
+            }
             
             function detenerMusicaPrincipal() {
                 if (!musicaDetenida && audioEstado.musica.reproduciendo) {
@@ -546,6 +723,116 @@
                             console.log("Error al reproducir música automáticamente: ", e);
                         });
                 }
+            }
+            
+            function crearCorazones() {
+                for (let i = 0; i < 15; i++) {
+                    const corazon = document.createElement('div');
+                    corazon.classList.add('corazon');
+                    corazon.innerHTML = '💖';
+                    corazon.style.left = Math.random() * 100 + '%';
+                    corazon.style.animationDelay = Math.random() * 2 + 's';
+                    corazonesContainer.appendChild(corazon);
+                    
+                    setTimeout(() => {
+                        corazon.remove();
+                    }, 3000);
+                }
+            }
+            
+            function cambiarGif() {
+                gifOsito.style.opacity = 0;
+                
+                setTimeout(() => {
+                    gifOsito.src = "osito.gif";
+                    
+                    setTimeout(() => {
+                        gifOsito.style.opacity = 1;
+                    }, 50);
+                }, 500);
+            }
+            
+            function enviarCorreo(mensajeTexto) {
+                // Mostrar estado de carga
+                cargando.style.display = 'block';
+                mensajeExito.style.display = 'none';
+                mensajeError.style.display = 'none';
+                
+                // Validar el mensaje antes de enviar
+                const errorValidacion = validarMensaje(mensajeTexto);
+                if (errorValidacion) {
+                    cargando.style.display = 'none';
+                    mensajeError.textContent = errorValidacion;
+                    mensajeError.style.display = 'block';
+                    return;
+                }
+                
+                // Parámetros para el template de EmailJS
+                const templateParams = {
+                    from_name: "LIZBETH", // Nombre del remitente
+                    to_name: "Ivan", // Nombre del destinatario
+                    message: mensajeTexto, // El mensaje del formulario
+                    reply_to: "74347198@est.unap.edu.pe" // Email para responder
+                };
+                
+                // Enviar el email usando EmailJS
+                emailjs.send('service_l0b7aq4', 'template_782dxpq', templateParams)
+                    .then(function(response) {
+                        console.log('SUCCESS!', response.status, response.text);
+                        cargando.style.display = 'none';
+                        mensajeExito.style.display = 'block';
+                        formularioEnviado = true;
+                        
+                        setTimeout(() => {
+                            mensajeExito.style.display = 'none';
+                        }, 5000);
+                    }, function(error) {
+                        console.log('FAILED...', error);
+                        cargando.style.display = 'none';
+                        alert('Hubo un error al enviar el mensaje. Por favor, verifica tu conexión e intenta nuevamente. Error: ' + JSON.stringify(error));
+                    });
+            }
+            
+            function activarBloqueoSalida() {
+                window.addEventListener('keydown', function(e) {
+                    if (e.key === 'F5') {
+                        e.preventDefault();
+                        mostrarAlertaBloqueo();
+                    }
+                });
+                
+                window.addEventListener('beforeunload', function(e) {
+                    if (!formularioEnviado) {
+                        e.preventDefault();
+                        e.returnValue = '¿Estás seguro de que quieres salir? Debes completar y enviar tu mensaje primero.';
+                        return e.returnValue;
+                    }
+                });
+                
+                document.addEventListener('contextmenu', function(e) {
+                    if (!formularioEnviado) {
+                        e.preventDefault();
+                        mostrarAlertaBloqueo();
+                    }
+                });
+            }
+            
+            function mostrarAlertaBloqueo() {
+                bloqueoPantalla.style.display = 'flex';
+            }
+            
+            function moverBotonNo() {
+                const containerRect = botonesContenedor.getBoundingClientRect();
+                const buttonRect = botonNo.getBoundingClientRect();
+                
+                const maxX = containerRect.width - buttonRect.width;
+                const maxY = containerRect.height - buttonRect.height;
+                
+                const newX = Math.floor(Math.random() * maxX);
+                const newY = Math.floor(Math.random() * maxY);
+                
+                botonNo.style.left = newX + 'px';
+                botonNo.style.top = newY + 'px';
             }
             
             abrirMensajeBtn.addEventListener('click', function() {
@@ -606,39 +893,12 @@
                 });
             });
             
-            function crearCorazones() {
-                for (let i = 0; i < 15; i++) {
-                    const corazon = document.createElement('div');
-                    corazon.classList.add('corazon');
-                    corazon.innerHTML = '💖';
-                    corazon.style.left = Math.random() * 100 + '%';
-                    corazon.style.animationDelay = Math.random() * 2 + 's';
-                    corazonesContainer.appendChild(corazon);
-                    
-                    setTimeout(() => {
-                        corazon.remove();
-                    }, 3000);
-                }
-            }
-            
-            function cambiarGif() {
-                gifOsito.style.opacity = 0;
-                
-                setTimeout(() => {
-                    gifOsito.src = "osito.gif";
-                    
-                    setTimeout(() => {
-                        gifOsito.style.opacity = 1;
-                    }, 50);
-                }, 500);
-            }
-            
             botonSi.addEventListener('click', function() {
                 detenerMusicaPrincipal();
                 siPresionado = true;
                 
                 mensaje.style.display = 'block';
-                mensaje.innerHTML = '¡SABIA QUE DIRIAS QUE SÍ JAJAJA! Gracias por aceptar. Espero te haya gustado ...💖 ';
+                mensaje.innerHTML = '¡SABIA QUE DIRIAS QUE SÍ JAJAJA! Gracias por aceptar. Ahora escribe un mensaje especial para mí.';
                 
                 cambiarGif();
                 cartaContainer.classList.add('fondo-osito');
@@ -648,7 +908,10 @@
                 }
                 
                 botonNo.style.display = 'none';
+                formularioMensaje.style.display = 'block';
                 pausarTodosLosAudios();
+                
+                activarBloqueoSalida();
                 
                 audio1.play()
                     .then(() => {
@@ -662,19 +925,21 @@
                     });
             });
             
-            function moverBotonNo() {
-                const containerRect = botonesContenedor.getBoundingClientRect();
-                const buttonRect = botonNo.getBoundingClientRect();
+            enviarMensajeBtn.addEventListener('click', function() {
+                const mensajeTexto = mensajeParaMi.value.trim();
                 
-                const maxX = containerRect.width - buttonRect.width;
-                const maxY = containerRect.height - buttonRect.height;
+                if (mensajeTexto === '') {
+                    mensajeError.textContent = "Por favor, escribe un mensaje antes de enviar.";
+                    mensajeError.style.display = 'block';
+                    return;
+                }
                 
-                const newX = Math.floor(Math.random() * maxX);
-                const newY = Math.floor(Math.random() * maxY);
-                
-                botonNo.style.left = newX + 'px';
-                botonNo.style.top = newY + 'px';
-            }
+                enviarCorreo(mensajeTexto);
+            });
+            
+            entendidoBloqueoBtn.addEventListener('click', function() {
+                bloqueoPantalla.style.display = 'none';
+            });
             
             botonNo.addEventListener('mouseover', function() {
                 moverBotonNo();
@@ -684,7 +949,8 @@
                 moverBotonNo();
                 crearCorazones();
                 
-                
+                mensaje.style.display = 'block';
+                mensaje.innerHTML = "beeee";
                 
                 setTimeout(() => {
                     mensaje.style.display = 'none';
