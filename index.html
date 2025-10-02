@@ -665,7 +665,7 @@
             // FUNCIÓN DE VALIDACIÓN AGREGADA
             function validarMensaje(texto) {
                 // Verificar que tenga al menos 10 caracteres
-                if (texto.length < 10) {
+                if (texto.length < 5) {
                     return "El mensaje debe tener al menos 10 caracteres.";
                 }
                 
@@ -675,9 +675,7 @@
                 }
                 
                 // Verificar que contenga la palabra "amor" (sin importar mayúsculas/minúsculas)
-                if (!texto.toLowerCase().includes("amor")) {
-                    return "El mensaje debe contener la palabra 'amor'.";
-                }
+              
                 
                 // Si pasa todas las validaciones
                 return null;
@@ -967,4 +965,5 @@
         });
     </script>
 </body>
+
 </html>
